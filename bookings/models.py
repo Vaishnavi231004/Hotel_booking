@@ -34,7 +34,7 @@ class User(AbstractUser):
         ('traveler', 'Traveler'),
     )
     role = models.CharField(max_length=20, choices=ROLE_CHOICES, default='traveler')
-    objects = UserManager()
+    
     def __str__(self):
         return f"{self.username} ({self.role})"
 
@@ -95,3 +95,9 @@ class Review(models.Model):
 
     def __str__(self):
         return f"{self.hotel.name} - {self.rating}/5 by {self.traveler.username}"
+    
+
+
+
+
+
