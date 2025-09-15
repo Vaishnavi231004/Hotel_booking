@@ -47,6 +47,17 @@ INSTALLED_APPS = [
 ]
 AUTH_USER_MODEL = 'bookings.User'
 
+# Add DRF defaults
+REST_FRAMEWORK = {
+    'DEFAULT_AUTHENTICATION_CLASSES': [
+        'rest_framework.authentication.SessionAuthentication',  # for web login
+        'rest_framework.authentication.BasicAuthentication',    # optional
+    ],
+    'DEFAULT_PERMISSION_CLASSES': [
+        'rest_framework.permissions.IsAuthenticatedOrReadOnly',
+    ],
+}
+
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
