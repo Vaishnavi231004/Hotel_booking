@@ -1,18 +1,28 @@
 from rest_framework import serializers
 from .models import User, Hotel, Room, Booking, Review
 
+from rest_framework import serializers
+from .models import User
+
+from rest_framework import serializers
+from .models import User, Hotel, Room, Booking, Review
+
 class UserSerializer(serializers.ModelSerializer):
-    password = serializers.CharField(write_only=True)
     class Meta:
         model = User
-        fields = ['id', 'username', 'email', 'role','password']
+        fields = ['id', 'username', 'email', 'password', 'role']
+        extra_kwargs = {
+            'password': {'write_only': True},
+            'role': {'read_only': True}  # frontend cannot set role
+        }
+
     def create(self, validated_data):
-        password = validated_data.pop('password', None)
-        user = User(**validated_data)
-        if password:
-            user.set_password(password)  # hashes the password
-        user.save()
+        # enforce traveler role for all frontend signups
+        validated_data['role'] = 'traveler'
+        user = User.objects.create_user(**validated_data)  # ✅ create_user hashes password
         return user
+
+
 class HotelSerializer(serializers.ModelSerializer):
     class Meta:
         model = Hotel
