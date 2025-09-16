@@ -5,7 +5,7 @@ from rest_framework import viewsets
 
 from .models import User, Hotel, Room, Booking, Review
 from .serializers import UserSerializer, HotelSerializer, RoomSerializer, BookingSerializer, ReviewSerializer
-
+from rest_framework.authtoken.models import Token
 
 from django.contrib.auth import authenticate
 from rest_framework.decorators import api_view, permission_classes
@@ -21,16 +21,15 @@ def login_view(request):
     user = authenticate(username=username, password=password)
 
     if user is not None:
+        token, _ = Token.objects.get_or_create(user=user)
         return Response({
             "id": user.id,
             "username": user.username,
-            "role": getattr(user, "role", "traveler")  # default role
+            "role": getattr(user, "role", "traveler"),
+            "token": token.key
         }, status=status.HTTP_200_OK)
     else:
         return Response({"error": "Invalid credentials"}, status=status.HTTP_400_BAD_REQUEST)
-
-
-
 
 class UserViewSet(viewsets.ModelViewSet):
     queryset = User.objects.all()

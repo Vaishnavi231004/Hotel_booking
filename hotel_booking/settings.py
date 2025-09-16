@@ -38,20 +38,21 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'rest_framework',
-    'rest_framework_simplejwt',
+
     'django_filters',
     'bookings',
+    'rest_framework.authtoken', 
     
      
 
 ]
+
 AUTH_USER_MODEL = 'bookings.User'
 
-# Add DRF defaults
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': [
-        'rest_framework.authentication.SessionAuthentication',  # for web login
-        'rest_framework.authentication.BasicAuthentication',    # optional
+        'rest_framework.authentication.TokenAuthentication',
+        'rest_framework.authentication.SessionAuthentication',  # keep for admin browsing
     ],
     'DEFAULT_PERMISSION_CLASSES': [
         'rest_framework.permissions.IsAuthenticatedOrReadOnly',
@@ -69,7 +70,7 @@ MIDDLEWARE = [
 ]
 
 ROOT_URLCONF = 'hotel_booking.urls'
-
+SESSION_ENGINE = 'django.contrib.sessions.backends.db'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
@@ -132,6 +133,8 @@ USE_TZ = True
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/5.2/howto/static-files/
+MEDIA_URL = '/media/'                   
+MEDIA_ROOT = BASE_DIR / 'media' 
 
 STATIC_URL = 'static/'
 
