@@ -57,7 +57,7 @@ class BookingViewSet(viewsets.ModelViewSet):
 
     def get_queryset(self):
         user = self.request.user
-        if user.is_staff:  # Admin can see all bookings
+        if user.is_staff:  
             return Booking.objects.all()
         return Booking.objects.filter(traveler=user)  # Travelers only see their own bookings
 

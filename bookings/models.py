@@ -90,10 +90,10 @@ class Booking(models.Model):
 class Review(models.Model):
     traveler = models.ForeignKey(User, on_delete=models.CASCADE, related_name="reviews")
     hotel = models.ForeignKey(Hotel, on_delete=models.CASCADE, related_name="reviews")
-    rating = models.IntegerField()  # 1 to 5
+    rating = models.IntegerField()  
     comment = models.TextField(blank=True, null=True)
     created_at = models.DateTimeField(default=timezone.now)
-
+    updated_at = models.DateTimeField(auto_now=True)
     def __str__(self):
         return f"{self.hotel.name} - {self.rating}/5 by {self.traveler.username}"
     
