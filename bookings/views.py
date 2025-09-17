@@ -1,7 +1,7 @@
 from django.shortcuts import render
 from rest_framework.permissions import AllowAny, IsAdminUser
 from rest_framework.exceptions import PermissionDenied
-from rest_framework import viewsets
+from rest_framework import viewsets, permissions
 
 from .models import User, Hotel, Room, Booking, Review
 from .serializers import UserSerializer, HotelSerializer, RoomSerializer, BookingSerializer, ReviewSerializer
@@ -11,6 +11,7 @@ from django.contrib.auth import authenticate
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.response import Response
 from rest_framework import status
+from .permissions import IsOwnerOrReadOnly
 
 @api_view(["POST"])
 @permission_classes([AllowAny])
@@ -50,6 +51,12 @@ class RoomViewSet(viewsets.ModelViewSet):
     queryset = Room.objects.all()
     serializer_class = RoomSerializer
 
+    def get_queryset(self):
+        hotel_id = self.request.query_params.get('hotel')
+        if hotel_id:
+            return Room.objects.filter(hotel_id=hotel_id)
+        return Room.objects.all()
+
 
 class BookingViewSet(viewsets.ModelViewSet):
     queryset = Booking.objects.all()
@@ -70,5 +77,16 @@ class BookingViewSet(viewsets.ModelViewSet):
 
 
 class ReviewViewSet(viewsets.ModelViewSet):
-    queryset = Review.objects.all()
+    queryset = Review.objects.all() 
     serializer_class = ReviewSerializer
+    permission_classes = [permissions.IsAuthenticatedOrReadOnly, IsOwnerOrReadOnly]
+
+    def get_queryset(self):
+        queryset = Review.objects.all()
+        hotel_id = self.request.query_params.get('hotel')  # check if ?hotel= is passed
+        if hotel_id:
+            queryset = queryset.filter(hotel_id=hotel_id)
+        return queryset
+
+    def perform_create(self, serializer):
+        serializer.save(traveler=self.request.user)
